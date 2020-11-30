@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<br>
+
+<div class="button-group">
+    <h5>Cliquez sur un bouton pour choisir ce que vous voulez voir:</h5>
+    <a href="{% url 'display_voitures' %}" class="btn btn-primary btn-md" role="button"> Voitures</a>
+    <a href="{% url 'add_voitures' %}#" class="btn btn-warning btn-sm" role="button"> +</a>
+
+    <a href="{% url 'display_clients' %}" class="btn btn-primary btn-md" role="button"> Clients</a>
+    <a href="{% url 'add_clients' %}#" class="btn btn-warning btn-sm" role="button"> +</a>
+
+    <a href="{% url 'display_visites' %}" class="btn btn-primary btn-md" role="button"> Visites</a>
+    <a href="{% url 'add_visites' %}#" class="btn btn-warning btn-sm" role="button"> +</a>
+
+</div>
+
+<br>
+
+<h4>En cours de visualisation: {{title}} </h4>
+
+<table class="table table-hover">
+
+    <thead>
+        <tr>
+            {% for header in headers %}
+            <th>{{header}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% if items %}
+            {% if title == "Voitures" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.pk }}</td>
+                        <td>{{ item.matricule }}</td>
+                        <td>{{ item.date_fabrication }}</td>
+                        <td>{{ item.id_modele }}</td>
+                        <td>{{ item.id_client }}</td>
+                    </tr>
+                {% endfor %}
+            {% elif title == "Clients" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.pk }}</td>
+                        <td>{{ item.nom_client }}</td>
+                        <td>{{ item.prenom_client }}</td>
+                        <td>{{ item.mail }}</td>
+                        <td>{{ item.numtel }}</td>
+                        <td>{{ item.address }}</td>
+                    </tr>  
+                {% endfor %}
+            {% elif title == "Visites" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.pk }}</td>
+                        <td>{{ item.id_client }}</td>
+                        <td>{{ item.id_voiture }}</td>
+                        <td>{{ item.matricule }}</td>
+                        <td>{{ item.visite_date }}</td>
+                        <td>{{ item.id_service }}</td>
+                        <td>{{ item.visite_prix }}</td>
+                    </tr> 
+                {% endfor %}
+            {% endif %}
+        {% else %}
+                <strong style="color: red;"> Le tableau est vide </strong>
+        {% endif %}
+
+    </tbody>
+
+</table>
+
+
+{% endblock %}

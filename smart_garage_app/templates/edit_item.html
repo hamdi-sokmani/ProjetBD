@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{%  load crispy_forms_tags %}
+
+    <div class="container">
+        <form method="POST">
+            <br>
+            {% csrf_token %}
+            
+            {{form|crispy }}
+
+            <button type="rgba(14, 24, 58, 0.486)6)n-success" class="btn btn-success" name="button">Modifier</button>
+        </form>
+
+    </div>
+
+
+
+{% endblock %}

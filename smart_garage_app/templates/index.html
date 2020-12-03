@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="button-group btn-group-toggle" data-toggle='buttons'>
+                <h5>Cliquez sur un bouton pour choisir ce que vous voulez voir:</h5>
+                <a href="{% url 'display_voitures' %}" class="btn btn-secondary btn-lg" role="button"> Voitures</a>
+                {% if title|lower == "voitures" %}
+                <a href="{% url 'add_voitures' %}#" class="btn btn-primary btn-sm" role="button">+</a>
+                {% endif %}
+                <a href="{% url 'display_clients' %}" class="btn btn-secondary btn-lg" role="button"> Clients</a>
+                {% if title|lower == "clients" %}
+                <a href="{% url 'add_clients' %}#" class="btn btn-primary btn-sm" role="button">+</a>
+                {% endif %}
+                <a href="{% url 'display_techniciens' %}" class="btn btn-secondary btn-lg" role="button"> Techniciens</a>
+                {% if title|lower == "techniciens" %}
+                <a href="{% url 'add_techniciens' %}#" class="btn btn-primary btn-sm" role="button">+</a>
+                {% endif %}
+                <a href="{% url 'display_interventions' %}" class="btn btn-secondary btn-lg" role="button"> Interventions</a>
+                {% if title|lower == "interventions" %}
+                <a href="{% url 'add_interventions' %}#" class="btn btn-primary btn-sm" role="button">+</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <h4> En cours de visualisation: {{title}} </h4>
+        </div>
+    </div>
+</div>
+
+<br>
+
+
+{% if title != "" %}
+<table class="table table-dark table-hover table-striped table-responsive-lg">
+
+    <thead>
+        <tr>
+            {% for header in headers %}
+            <th>{{header}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% if items %}
+            {% if title|lower == "voitures" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.matricule }}</td>
+                        <td>{{ item.marque }}</td>
+                        <td>{{ item.type }}</td>
+                        <td>{{ item.date_fabrication }}</td>
+                        <td>{{ item.kilometrage }}</td>
+                        <td>{{ item.date_arrivee }}</td>
+                        <td>
+                            <a href="{% url 'edit_voitures' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                            <a href="{% url 'delete_voitures' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% elif title|lower == "clients" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.numero }}</td>
+                        <td>{{ item.nom }}</td>
+                        <td>{{ item.prenom }}</td>
+                        <td>{{ item.addresse }}</td>
+                        <td>{{ item.nom_personne_en_charge }}</td>
+                        <td>
+                            <a href="{% url 'edit_clients' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                            <a href="{% url 'delete_clients' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                        </td>
+                    </tr>  
+                {% endfor %}
+            {% elif title|lower == "interventions" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.matricule_voiture }}</td>
+                        <td>{{ item.numero_client }}</td>
+                        <td>{{ item.numero_technicien }}</td>
+                        <td>{{ item.date_intervention }}</td>
+                        <td>{{ item.type_reparition }}</td>
+                        <td>{{ item.remarque }}</td>
+                        <td style="width: 100px;">
+                            <a href="{% url 'edit_interventions' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                            <a href="{% url 'delete_interventions' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                        </td>
+                    </tr> 
+                {% endfor %}
+            {% elif title|lower == "techniciens" %}
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.numero }}</td>
+                        <td>{{ item.nom }}</td>
+                        <td>{{ item.prenom }}</td>
+                        <td>{{ item.nombre_voiture_reparees }}</td>
+                        <td>
+                            <a href="{% url 'edit_techniciens' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                            <a href="{% url 'delete_techniciens' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></span></a>
+                        </td>
+                    </tr> 
+                {% endfor %}
+            {% endif %}
+        {% else %}
+        <br><br>
+        <div> <h1><strong style="color: red;"> Pas de données à afficher</strong></h1> </div>
+        {% endif %}
+
+    </tbody>
+
+</table>
+{% endif %}
+
+
+{% endblock %}

@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='login')
 def index(request):
+    
     items_clients = Client.objects.all()
     items_voitures = Voiture.objects.all()
     items_interventions = Intervention.objects.all()

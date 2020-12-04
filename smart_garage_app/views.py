@@ -12,13 +12,24 @@ from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 
+# Une vue est une interface utilisateur. C'est ce qu'un utilisateur voit dans son navigateur lorsqu'il rend un site web.
+# index : notre page d'acceuil
+# responsablePage: page de l'admin
+# registerPage, loginPage, logoutUser : les pages d'inscription, connexion et déconnexion 
+# add_elements et add_... : les pages d'ajout d'une donnée
+# edit_elements et edit_... : les pages de modification d'une donnée
+# delete_elements et delete_... : les pages de suppression d'une donnée
+
+# L'utilisateur doit être connecté pour y accéder
 @login_required(login_url='login')
 def index(request):
     
+    # Récupération de toutes les données dans les tableaux clients, voitures et interventions
     items_clients = Client.objects.all()
     items_voitures = Voiture.objects.all()
     items_interventions = Intervention.objects.all()
 
+    # Calculer le nombre total d'éléments
     cursor = connection.cursor() 
     cursor.execute("SELECT count(*) FROM Client") 
     nbr_total_clients = cursor.fetchone()[0]
@@ -27,6 +38,7 @@ def index(request):
     cursor.execute("SELECT count(*) FROM Intervention") 
     nb_total_interventions = cursor.fetchone()[0]
 
+    # Appliquer les filers sur nos tables
     myVoitureFilter = VoitureFilter(request.GET, queryset=items_voitures)
     myClientFilter = ClientFilter(request.GET, queryset=items_clients)
     myInterventionFilter = InterventionFilter(request.GET, queryset=items_interventions)
@@ -35,6 +47,7 @@ def index(request):
     items_voitures = myVoitureFilter.qs
     items_interventions = myInterventionFilter.qs
 
+    # context : toutes les données qui sont communiquées à nos templates (pages Html)
     context = {
         'items_clients' : items_clients,
         'items_voitures' : items_voitures,
@@ -46,22 +59,28 @@ def index(request):
         'client_filter': myClientFilter,
         'intervention_filter': myInterventionFilter
     }    
+
+    # Que fait la fonction après, Ici elle rend les pages index.html
     return render(request, 'index.html', context)
 
+# L'utilisateur doit être connecté et l'admin pour y accéder 
 @login_required(login_url='login')
 @responsable_role
 def responsablePage(request):
+
+    # Récupération de toutes les données dans le tableaux technicien
     items_techniciens = Technicien.objects.all()
 
+    # Calculer le nombre total des techniciens
     cursor = connection.cursor() 
     cursor.execute("SELECT count(*) FROM Technicien") 
-
-    myTechnicienFilter = TechnicienFilter(request.GET, queryset=items_techniciens)
-
     nbr_total_techniciens = cursor.fetchone()[0]
 
+    # Appliquer les filtres sur la table
+    myTechnicienFilter = TechnicienFilter(request.GET, queryset=items_techniciens)
     items_techniciens = myTechnicienFilter.qs
 
+    # Données envoyés à la page html
     context = {
         'items_technicien' : items_techniciens,
         'technicien_filter' : TechnicienFilter,
@@ -69,11 +88,13 @@ def responsablePage(request):
 
     }
 
+    # Rédirige vers la page responsable.html
     return render(request, 'responsable.html', context)
 
 @unauthenticated_user
 def registerPage(request):
     
+    # formulaire de création d'un compte
     form = CreateUserForm()
 
     if request.method == 'POST':
@@ -82,6 +103,7 @@ def registerPage(request):
             user = form.save()
             username = form.cleaned_data.get('username')
 
+            # Affecte automatiquement le rôle de technicien au nouvel utilisateur 
             group = Group.objects.get(name='technicien')
             user.group.add(group)
 
@@ -99,6 +121,7 @@ def loginPage(request):
         username = request.POST.get('username')
         password =request.POST.get('password')
 
+        # Vérifier si l'utilisateur existe dans notre liste d'utilisateurs 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -112,11 +135,15 @@ def loginPage(request):
 
 @login_required(login_url='login')
 def logoutUser(request):
+
+    # Déconnecter l'utilisateur
     logout(request)
     return redirect('login')
 
 @login_required(login_url='login')
 def add_elements(request, cls):
+
+    # Nous obtenons le formulaire d'utilisateur correspondant et vérifions si la saisie est valable
     if request.method == "POST":
         form = cls(request.POST)
 
@@ -141,6 +168,8 @@ def add_techniciens(request):
 
 @login_required(login_url='login')
 def edit_elements(request, pk, model, cls):
+
+    # Nous recherchons l'élément à éditer par sa clé primaire et si nous le trouvons, nous appliquons les nouvelles données récupérées dans le formulaire
     item = get_object_or_404(model, pk=pk)
 
     if request.method == "POST":
@@ -165,6 +194,8 @@ def edit_techniciens(request, pk):
 
 @login_required(login_url='login')
 def delete_elements(request, pk, model):
+
+    # Récupérer l'élément à supprimer de la table et ensuite nous le supprimons et mettons à jour les données des tables dans le template
     model.objects.filter(pk=pk).delete()
     items = model.objects.all()
 

@@ -3,6 +3,12 @@ from django_filters import DateFilter
 
 from .models import *
 
+# Définit les filtres utilisés dans la fonction de recherche. Chaque modèle dispose d'un filtre avec les champs que nous pensons être les plus importants pour réaliser une recherche avec
+# VoitureFilter : utilisé pour la recherche sur la table des voitures
+# ClientFilter : utilisé pour la recherche sur la table des cliens
+# InterventionFilter : utilisé pour la recherche sur la table des Interventions
+# TechnicienFilter : utilisé pour la recherche sur la table des techniciens
+
 class VoitureFilter(django_filters.FilterSet):
     startdate = DateFilter(field_name='date_arrivee', lookup_expr='gte')
     enddate = DateFilter(field_name='date_arrivee', lookup_expr='lte')

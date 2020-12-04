@@ -3,6 +3,15 @@ from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+# Utilisé pour définir tous les formulaires que l'utilisateur utilise pour interagir avec les données des tableaux
+# ClientForm : définit les champs dans le formulaire d'un client
+# voitureForm : définit les champs dans le formulaire d'une voiture
+# interventionForm : définit les champs dans le formulaire d'une intervention
+# technicienForm : définit les champs dans le formulaire d'un technicien
+# communeForm : définit les champs dans le formulaire d'une commune (Non utilisé)
+# typeReparitionForm : définit les champs dans le formulaire d'un type réparition (Non utilisé)
+# CreateUserForm : définit les champs dans le formulaire d'inscription à l'application
+
 class clientForm(forms.ModelForm):
     class Meta:
         model = Client

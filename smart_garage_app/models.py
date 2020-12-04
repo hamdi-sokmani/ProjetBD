@@ -7,6 +7,15 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+# Définit tous les modèles que nous utilisons dans l'application. Django dispose d'un système ORM qui relie automatiquement les champs de nos classes aux tables de la base de données.
+# Pour chaque modèle, nous définissons chaque attribut qui est lié à un champ du tableau, y compris les clés primaires et les clés étrangères
+# Client : la table des clients
+# Commune : la table des communes
+# Intervention : la tables des interventions
+# Technicien : la table des techniciens
+# TypeReparition : la table des types de réparition
+# Voiture : la table des voitures
+
 class Client(models.Model):
     numero = models.IntegerField('Numéro', primary_key=True)
     nom = models.CharField('Nom', max_length=20)

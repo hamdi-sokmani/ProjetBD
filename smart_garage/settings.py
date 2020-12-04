@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'smart_garage_app',
-    'crispy_forms',
-    'django_filters'
+    'smart_garage_app', # Notre application
+    'crispy_forms', # crispy-forms une extension qui améliore les formulaires
+    'django_filters' # django-filters utilisé pour la recherche dans les tableaux
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -78,6 +78,8 @@ WSGI_APPLICATION = 'smart_garage.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# Options à modifier avant de lancer l'application car elles précisent les paramètres de connexion à la base de données
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -112,9 +114,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'fr-fr'
+LANGUAGE_CODE = 'fr-fr' # Language défaut de l'application
 
-DATE_INPUT_FORMATS = ['%d-%m-%Y']
+DATE_INPUT_FORMATS = ['%d-%m-%Y'] # Format des Dates
 
 TIME_ZONE = 'UTC'
 
@@ -127,6 +129,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+
+# Chemin d'accès aux fichiers statiques (css+js+png..)
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')

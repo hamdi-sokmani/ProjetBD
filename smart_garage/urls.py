@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Spécifie les urls que l'application utilise (ici la page d'administration de django et les urls spécifiées dans la smart_garage_app
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('smart_garage_app.urls'))

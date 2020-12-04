@@ -37,7 +37,7 @@ class Commune(models.Model):
 class Intervention(models.Model):
     matricule_voiture = models.ForeignKey('Voiture', models.CASCADE, db_column='matricule_voiture', verbose_name='Matricule de la voiture')
     numero_client = models.ForeignKey('Client', models.CASCADE, db_column='numero_client', verbose_name='Numéro du client')
-    numero_technicien = models.ForeignKey('Technicien', models.CASCADE, db_column='numero_technicien', verbose_name='Numéro du client')
+    numero_technicien = models.ForeignKey('Technicien', models.CASCADE, db_column='numero_technicien', verbose_name='Numéro du Technicien')
     date_intervention = models.DateField("Date de l'intervention")
     type_reparition = models.ForeignKey('TypeReparition', models.CASCADE, db_column='type_reparition', verbose_name='Type de réparation')
     remarque = models.TextField('Remarques du technicien', max_length=200, blank=True)

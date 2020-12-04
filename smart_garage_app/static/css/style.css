@@ -1,0 +1,37 @@
+body{
+    background-color: #ebeff5;
+}
+
+#logo{
+    width: 100px;
+}
+
+#total-clients{
+        background-color: #4cb4c7;
+}
+
+
+#total-voitures{
+        background-color: #7abecc;
+}
+
+#total-interventions{
+        background-color: #7CD1C0;
+}
+
+#total-techniciens{
+    background-color: #af7cd1;
+}
+
+#messages{
+        background-color: grey;
+        color: red;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+#hello{
+    font-size: 18px;
+    color: #fff;
+    margin-right: 20px;
+}

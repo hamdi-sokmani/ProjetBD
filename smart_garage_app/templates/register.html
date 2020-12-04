@@ -1,0 +1,26 @@
+
+{% extends 'base2.html' %}
+
+{% block body %}
+
+
+{%  load crispy_forms_tags %}
+    <div class="container">
+        <br>
+        <div class="row">
+            <br>
+            <div class="form_bg" style="height: 700px;">
+                <h2 class="text-center">Page d'inscription</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{form|crispy}}
+                    <input type="submit" class="btn btn-success" name="Créer utilisateur">
+                </form>
+                <div class="d-flex justify-content-center links">
+                    Vous avez déjà un compte ? <a href="{% url 'login' %}" class="ml-2">Connecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endblock %}

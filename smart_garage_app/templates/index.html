@@ -2,120 +2,253 @@
 
 {% block body %}
 
+{%  load crispy_forms_tags %}
 <br>
+{% if request.user.is_staff %}
+<div class="row">
+	<div class="col">
+		<div class="col-md">
+			<div class="card text-center text-white  mb-3" id="total-clients">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Nombre total des clients</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	{% if total_client%}
+                        <h3 class="card-title">{{total_client}}</h3>
+                        {% else %}
+                        <h3 class="card-title">0</h3>
+                        {% endif %}
+			  	</div>
+			</div>
+		</div>
+	</div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-7">
-            <div class="button-group btn-group-toggle" data-toggle='buttons'>
-                <h5>Cliquez sur un bouton pour choisir ce que vous voulez voir:</h5>
-                <a href="{% url 'display_voitures' %}" class="btn btn-secondary btn-lg" role="button"> Voitures</a>
-                {% if title|lower == "voitures" %}
-                <a href="{% url 'add_voitures' %}#" class="btn btn-primary btn-sm" role="button">+</a>
-                {% endif %}
-                <a href="{% url 'display_clients' %}" class="btn btn-secondary btn-lg" role="button"> Clients</a>
-                {% if title|lower == "clients" %}
-                <a href="{% url 'add_clients' %}#" class="btn btn-primary btn-sm" role="button">+</a>
-                {% endif %}
-                <a href="{% url 'display_techniciens' %}" class="btn btn-secondary btn-lg" role="button"> Techniciens</a>
-                {% if title|lower == "techniciens" %}
-                <a href="{% url 'add_techniciens' %}#" class="btn btn-primary btn-sm" role="button">+</a>
-                {% endif %}
-                <a href="{% url 'display_interventions' %}" class="btn btn-secondary btn-lg" role="button"> Interventions</a>
-                {% if title|lower == "interventions" %}
-                <a href="{% url 'add_interventions' %}#" class="btn btn-primary btn-sm" role="button">+</a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="col-md-5">
-            <h4> En cours de visualisation: {{title}} </h4>
-        </div>
-    </div>
+	<div class="col">
+		<div class="col-md">
+			<div class="card text-center text-white  mb-3" id="total-voitures">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Nombre total des voitures</h5>
+			  	</div>
+			  	<div class="card-body">
+                      {% if total_voiture%}
+                        <h3 class="card-title">{{total_voiture}}</h3>
+                        {% else %}
+                        <h3 class="card-title">0</h3>
+                        {% endif %}
+			  	</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col">
+		<div class="col-md">
+			<div class="card text-center text-white mb-3" id="total-interventions">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Nombre total des interventions</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	{% if total_intervention%}
+                        <h3 class="card-title">{{total_intervention}}</h3>
+                        {% else %}
+                        <h3 class="card-title">0</h3>
+                        {% endif %}
+			  	</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <br>
 
+<br>
 
-{% if title != "" %}
+<br>
+{% endif %}
+<div class="row" style="display: table; padding-left: 15px; padding-right: 15px;">
+	<div class="col-md-6" style="display: table-cell">
+		<div class="card card-body" id="clients-table">
+            <h4>CLIENTS:</h4>
+            <hr>
+			<a href="{% url 'add_clients' %}" class="btn btn-secondary  btn-sm btn-block" href="">Ajouter</a>
+            <a href="#" class="btn btn-secondary  btn-sm btn-block" onclick="myFunction1()">Chercher</a>
+            <br>
+            <div class="row" id="client" style="display: none;">
+                <div class="col">
+                    <div class="card card-body">
+                        <form method="get">
+                            {{client_filter.form|crispy}}
+                        <button class="btn btn-primary" type="submit">Search</button>
+                      </form>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <table class="table table-dark table-hover table-striped  table-sm">
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Addresse</th>
+                        <th>Personne résponsable de la commande</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if items_clients %}
+                    {% for item in items_clients %}
+                        <tr>
+                            <td>{{ item.numero }}</td>
+                            <td>{{ item.nom }}</td>
+                            <td>{{ item.prenom }}</td>
+                            <td>{{ item.addresse }}</td>
+                            <td>{{ item.nom_personne_en_charge }}</td>
+                            <td style="width: 100px;">
+                            <a href="{% url 'edit_clients' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                            <a href="{% url 'delete_clients' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-6" style=" display: table-cell">
+		<div class="card card-body" id="voitures-table">
+            <h4>VOITURES:</h4>
+            <hr>
+            <a href="{% url 'add_voitures' %}#" class="btn btn-secondary  btn-sm btn-block" href="">Ajouter</a>
+            <a href="#" class="btn btn-secondary  btn-sm btn-block" onclick="myFunction2()">Chercher</a>
+            <br>
+            <div class="row" id="voiture" style="display: none;">
+                <div class="col">
+                    <div class="card card-body">
+                        <form method="get">
+                            {{voiture_filter.form|crispy}}
+                        <button class="btn btn-primary" type="submit">Search</button>
+                      </form>
+                    </div>
+                </div>
+                
+            </div>
+            <br>
+			<table class="table table-dark table-hover table-striped  table-sm">
+                <thead>
+                    <tr>
+                        <th>Matricule</th>
+                        <th>Marque</th>
+                        <th>Type</th>
+                        <th>Date de fabrication</th>
+                        <th>Kilométrage</th>
+                        <th>Date d'arrivée</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if items_voitures %}
+                    {% for item in items_voitures %}
+                        <tr>
+                            <td>{{ item.matricule }}</td>
+                            <td>{{ item.marque }}</td>
+                            <td>{{ item.type }}</td>
+                            <td>{{ item.date_fabrication }}</td>
+                            <td>{{ item.kilometrage }}</td>
+                            <td>{{ item.date_arrivee }}</td>
+                            <td style="width: 100px;">
+                                <a href="{% url 'edit_voitures' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                                <a href="{% url 'delete_voitures' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                        <td> - </td>
+                    </tr>
+                {% endif %}
+                </tbody>
+			</table>
+		</div>
+	</div>
+
+</div>
+<br>
+
+<div class="container">
+
+    <div class="card card-body" id="interventions-table">
+        <h4>INTERVENTIONS:</h4>
+        <hr>
+<a href="{% url 'add_techniciens' %}#" class="btn btn-secondary  btn-sm btn-block" role="button">Ajouter</a>
+<a href="#" class="btn btn-secondary  btn-sm btn-block" onclick="myFunction3()">Chercher</a>
+<br>
+<div class="row" id="intervention" style="display: none;>
+    <div class="col">
+        <div class="card card-body">
+            <form method="get">
+                {{intervention_filter.form|crispy}}
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
+    </div>
+</div>
+<br>
 <table class="table table-dark table-hover table-striped table-responsive-lg">
 
     <thead>
         <tr>
-            {% for header in headers %}
-            <th>{{header}}</th>
-            {% endfor %}
+            <td>Voiture</td>
+            <td>Client</td>
+            <td>Technicien</td>
+            <td>Date de l'intervention</td>
+            <td>Type de Réparition</td>
+            <td>Remarques du technicien</td>
         </tr>
     </thead>
 
     <tbody>
-        {% if items %}
-            {% if title|lower == "voitures" %}
-                {% for item in items %}
-                    <tr>
-                        <td>{{ item.matricule }}</td>
-                        <td>{{ item.marque }}</td>
-                        <td>{{ item.type }}</td>
-                        <td>{{ item.date_fabrication }}</td>
-                        <td>{{ item.kilometrage }}</td>
-                        <td>{{ item.date_arrivee }}</td>
-                        <td>
-                            <a href="{% url 'edit_voitures' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
-                            <a href="{% url 'delete_voitures' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% elif title|lower == "clients" %}
-                {% for item in items %}
-                    <tr>
-                        <td>{{ item.numero }}</td>
-                        <td>{{ item.nom }}</td>
-                        <td>{{ item.prenom }}</td>
-                        <td>{{ item.addresse }}</td>
-                        <td>{{ item.nom_personne_en_charge }}</td>
-                        <td>
-                            <a href="{% url 'edit_clients' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
-                            <a href="{% url 'delete_clients' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
-                        </td>
-                    </tr>  
-                {% endfor %}
-            {% elif title|lower == "interventions" %}
-                {% for item in items %}
-                    <tr>
-                        <td>{{ item.matricule_voiture }}</td>
-                        <td>{{ item.numero_client }}</td>
-                        <td>{{ item.numero_technicien }}</td>
-                        <td>{{ item.date_intervention }}</td>
-                        <td>{{ item.type_reparition }}</td>
-                        <td>{{ item.remarque }}</td>
-                        <td style="width: 100px;">
-                            <a href="{% url 'edit_interventions' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
-                            <a href="{% url 'delete_interventions' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
-                        </td>
-                    </tr> 
-                {% endfor %}
-            {% elif title|lower == "techniciens" %}
-                {% for item in items %}
-                    <tr>
-                        <td>{{ item.numero }}</td>
-                        <td>{{ item.nom }}</td>
-                        <td>{{ item.prenom }}</td>
-                        <td>{{ item.nombre_voiture_reparees }}</td>
-                        <td>
-                            <a href="{% url 'edit_techniciens' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
-                            <a href="{% url 'delete_techniciens' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></span></a>
-                        </td>
-                    </tr> 
-                {% endfor %}
-            {% endif %}
+        {% if items_interventions %}
+            {% for item in items_interventions %}
+            <tr>
+                <td>{{ item.matricule_voiture }}</td>
+                <td>{{ item.numero_client }}</td>
+                <td>{{ item.numero_technicien }}</td>
+                <td>{{ item.date_intervention }}</td>
+                <td>{{ item.type_reparition }}</td>
+                <td>{{ item.remarque }}</td>
+                <td style=" display:block; width: 100px;">
+                    <a href="{% url 'edit_interventions' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                    <a href="{% url 'delete_interventions' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                </td>
+            </tr> 
+            {% endfor %}
         {% else %}
-        <br><br>
-        <div> <h1><strong style="color: red;"> Pas de données à afficher</strong></h1> </div>
+            <tr>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+            </tr>
         {% endif %}
 
     </tbody>
 
 </table>
-{% endif %}
-
+</div>
+</div>
 
 {% endblock %}

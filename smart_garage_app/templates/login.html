@@ -1,0 +1,54 @@
+
+{% extends 'base2.html' %}
+
+{% block body %}
+
+{%  load crispy_forms_tags %}
+    <div class="container">
+        <br>
+        <div class="row">
+            <div class="form_bg" style="height: 400px;">
+                <h2 class="text-center">Page de connexion</h2>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <br>
+                    <br>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <span class="input-group-text"></span>
+                        </div>
+
+                        <input type="text" name="username" placeholder="Nom d'utlisateur" class="form-control">
+                    </div>
+
+                    <div class="input-group mb-2">
+                        <div class="input-group-append">
+                            <span class="input-group-text"></span>
+                        </div>
+
+                            <input type="password" name="password" placeholder="Mot de pass" class="form-control" >
+                    </div>
+
+                        <div class="d-flex justify-content-center mt-3 login_container">
+                            <input class="btn btn-success" type="submit" value="Connecter">
+                        </div>
+                </form>
+                
+                <div class="d-flex justify-content-center links">
+                    Vous n'avez pas de compte ? <a href="{% url 'register' %}" class="ml-2">S'inscrire</a>
+                </div>
+
+                <br>
+
+                <div>
+                    {% for message in messages %}
+					<p id="messages">{{message}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+                
+            
+        </div>
+    </div>
+
+    {% endblock %}

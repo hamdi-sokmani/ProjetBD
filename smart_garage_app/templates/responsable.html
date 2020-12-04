@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{%  load crispy_forms_tags %}
+<br>
+
+<div class="row">
+	<div class="col">
+		<div class="col-md">
+			<div class="card text-center text-white  mb-3" id="total-techniciens">
+			  	<div class="card-header">
+			  		<h5 class="card-title">Nombre total des techniciens</h5>
+			  	</div>
+			  	<div class="card-body">
+			    	{% if total_technicien%}
+                        <h3 class="card-title">{{total_technicien}}</h3>
+                        {% else %}
+                        <h3 class="card-title">0</h3>
+                        {% endif %}
+			  	</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<br>
+
+<br>
+
+<div class="container">
+
+    <div class="card card-body" id="technicien-table">
+        <h4>TECHNICIENS:</h4>
+        <hr>
+<a href="{% url 'add_techniciens' %}#" class="btn btn-secondary  btn-sm btn-block" role="button">Ajouter</a>
+<a href="#" class="btn btn-secondary  btn-sm btn-block" href="" onclick="myFunction4()">Chercher</a>
+<br>
+<div class="row" id='technicien' style="display: none;">
+    <div class="col">
+        <div class="card card-body">
+            <form method="get">
+                {{technicien_filter.form|crispy}}
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
+    </div>
+</div>
+<br>
+<table class="table table-dark table-hover table-striped table-responsive-lg">
+    <thead>
+        <tr>
+            <td>Numéro</td>
+            <td>Nom</td>
+            <td>Prénom</td>
+            <td>Nombre de voiture réparé</td>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% if items_technicien %}
+            {% for item in items_technicien %}
+            <tr>
+                <td>{{ item.numero }}</td>
+                <td>{{ item.nom }}</td>
+                <td>{{ item.prenom }}</td>
+                <td>{{ item.nombre_voiture_reparees }}</td>
+                <td style=" display:block; width: 100px;">
+                    <a href="{% url 'edit_techniciens' item.pk %}" class="btn btn-info btn-sm" role="button"><span class="fa fa-edit"></a>
+                    <a href="{% url 'delete_techniciens' item.pk %}" class="btn btn-danger btn-sm" role="button"><span class="fa fa-trash"></a>
+                </td>
+            </tr> 
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+                <td> - </td>
+            </tr>
+        {% endif %}
+
+    </tbody>
+
+</table>
+</div>
+</div>
+{% endblock %}

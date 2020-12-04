@@ -1,0 +1,166 @@
+CREATE TABLE Commune (nom varchar(20) NOT NULL PRIMARY KEY, 
+						nombre_client integer DEFAULT 0);
+                        
+CREATE TABLE Client (numero int(10) NOT NULL PRIMARY KEY, 
+						nom varchar(20) NOT NULL, 
+						prenom varchar(20) NOT NULL, 
+						addresse varchar(20) NOT NULL, 
+						nom_personne_en_charge varchar(20) NOT NULL,
+                        Foreign Key (addresse) references Commune(nom) ON UPDATE CASCADE);                        
+                        
+CREATE TABLE Voiture (matricule varchar(10) NOT NULL PRIMARY KEY,
+						marque varchar(20) NOT NULL, 
+						type varchar(20) NOT NULL, 
+						date_fabrication date NOT NULL, 
+						kilometrage int(11), 
+						date_arrivee date NOT NULL);
+                        
+CREATE TABLE Technicien (numero int(10) NOT NULL PRIMARY KEY,
+							nom varchar(20) NOT NULL,
+							prenom varchar(20) NOT NULL,
+							nombre_voiture_reparees INTEGER DEFAULT 0);
+                            
+CREATE TABLE Type_reparition (type int(2) NOT NULL PRIMARY KEY, 
+								nom varchar(20) NOT NULL,
+								details varchar(200) NOT NULL);
+                                
+CREATE TABLE Intervention (id int(10) NOT NULL PRIMARY KEY auto_increment,
+							matricule_voiture varchar(10) NOT NULL,
+							numero_client int(10) NOT NULL,
+							numero_technicien int(10) NOT NULL,
+                            date_intervention date NOT NULL,
+							type_reparition int(2) NOT NULL,
+							remarque varchar(200),
+                            Foreign Key (matricule_voiture) references Voiture(matricule) ON UPDATE CASCADE,
+                            Foreign Key (numero_client) references Client(numero) ON UPDATE CASCADE,
+                            Foreign Key (numero_technicien) references Technicien(numero) ON UPDATE CASCADE,
+                            Foreign Key (type_reparition) references Type_reparition(type) ON UPDATE CASCADE);
+
+/*ALTER TABLE Client ADD FOREIGN KEY cfk (addresse) REFERENCES Commune(nom);
+ALTER TABLE Intervention ADD FOREIGN KEY ifk1 (matricule_voiture) REFERENCES Voiture(matricule);
+ALTER TABLE Intervention ADD FOREIGN KEY ifk2 (numero_client) REFERENCES Client(numero);
+ALTER TABLE Intervention ADD FOREIGN KEY ifk3 (numero_technicien) REFERENCES Technicien(numero);
+ALTER TABLE Intervention ADD FOREIGN KEY ifk4 (type_reparition) REFERENCES Type_reparition(type);*/
+
+DELIMITER $$
+CREATE TRIGGER update_nombre_client_d
+after DELETE on Client 
+FOR EACH ROW
+BEGIN
+	UPDATE Commune c
+	SET c.nombre_client = c.nombre_client - 1
+	WHERE c.nom <=> OLD.addresse
+	;
+END$$
+
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER update_nombre_client_i
+after INSERT on Client 
+FOR EACH ROW
+BEGIN
+	UPDATE Commune c
+	SET c.nombre_client = c.nombre_client + 1
+	WHERE c.nom <=> NEW.addresse
+	;
+END$$
+
+DELIMITER ;
+DELIMITER $$
+
+CREATE TRIGGER update_nombre_client_u
+after UPDATE ON Client
+FOR EACH ROW
+BEGIN
+    IF NOT ( NEW.addresse <=> OLD.addresse ) THEN
+	    UPDATE Commune c
+		SET c.nombre_client = c.nombre_client - 1
+		WHERE c.nom <=> OLD.addresse
+       ;
+       
+        UPDATE Commune c
+	    SET c.nombre_client = c.nombre_client + 1
+	    WHERE c.nom <=> NEW.addresse
+	    ;
+    END IF; 
+END$$
+
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER update_nombre_voiture_reparees_d
+after DELETE on Intervention 
+FOR EACH ROW
+BEGIN
+	UPDATE Technicien t
+	SET t.nombre_voiture_reparees = t.nombre_voiture_reparees - 1
+	WHERE t.numero <=> OLD.numero_technicien
+	;
+END$$
+
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER update_nombre_voiture_reparees_i
+after INSERT on Intervention 
+FOR EACH ROW
+BEGIN
+	UPDATE Technicien t
+	SET t.nombre_voiture_reparees = t.nombre_voiture_reparees + 1
+	WHERE t.numero <=> NEW.numero_technicien
+	;
+END$$
+
+DELIMITER ;
+DELIMITER $$
+
+CREATE TRIGGER update_nombre_voiture_reparees_u
+after UPDATE ON Intervention
+FOR EACH ROW
+BEGIN
+    IF NOT ( NEW.numero_technicien <=> OLD.numero_technicien ) THEN
+		UPDATE Technicien t
+		SET t.nombre_voiture_reparees = t.nombre_voiture_reparees - 1
+		WHERE t.numero <=> OLD.numero_technicien
+		;
+       
+        UPDATE Technicien t
+		SET t.nombre_voiture_reparees = t.nombre_voiture_reparees + 1
+		WHERE t.numero <=> NEW.numero_technicien
+		;
+    END IF; 
+END$$
+
+DELIMITER ;
+
+Insert into commune(nom) Values("Lyon"), ("Paris"), ("Grenoble");
+
+Insert into client(numero, nom, prenom, addresse, nom_personne_en_charge) values
+				(21021, "Sokmani", "Hamdi", "Lyon", "Foulani"),
+                (31013, "Medeia", "Wayra", "Paris", "Adanna"),
+                (41041, "Kerr", "Kalie", "Grenoble", "Kristiāna"),
+                (61061, "Ajit", "Jarosław", "Lyon", "Trinh"),
+                (81081, "Prasad", "Howie", "Paris", "Foulani")
+            ;
+
+Insert into voiture(matricule, marque, type, date_fabrication, kilometrage, date_arrivee) values
+				(6454642, "Ferrari", "Voiture Sportive", STR_TO_DATE('01/11/2020', '%m/%d/%Y'), 1000, STR_TO_DATE('01/11/2019', '%m/%d/%Y')),
+                (6149744, "Jeep", "4x4", STR_TO_DATE('11/02/2019', '%m/%d/%Y'), 120000, STR_TO_DATE('01/11/2019', '%m/%d/%Y'))
+			;
+            
+Insert into technicien(numero, nom, prenom) values
+				(1554, "Griselda", "Şan"),
+                (9442, "Sandra", "Narayanan"),
+                (3345, "Andy", "Bayani")
+			;
+            
+Insert into type_reparition(type, nom, details) values
+				(1, "Forfaitaire", "First time i don't know what to put"),
+                (2, "Non forfaitaire", "Maybe i'll know another time")
+			;
+            
+Insert into intervention(matricule_voiture, numero_client, numero_technicien, date_intervention, type_reparition, remarque) values
+				(6454642, 21021, 1554, STR_TO_DATE('03/11/2020',  '%m/%d/%Y'), 1, "le moteur est très bruyant"),
+                (6149744, 41041, 9442, STR_TO_DATE('02/06/2020', '%m/%d/%Y'), 2, "fenetre brisée"),
+                (6454642, 21021, 3345, STR_TO_DATE('05/11/2020', '%m/%d/%Y'), 1, "pneus changés")
+			;
